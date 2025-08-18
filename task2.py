@@ -12,10 +12,8 @@ def call_llm_message(prompt_messages):
                                    "format": "json"},
                              timeout=120)  # Increased timeout for local LLM
     response.raise_for_status()  # Raise an exception for HTTP errors
-    print(response.json())
     llm_output = response.json()['message']['content']
     return llm_output
-    # return llm_response(llm_output)
 
 
 def run_agent_loop():
@@ -27,6 +25,7 @@ def run_agent_loop():
             continue
         conversation_history.append(({"role": "user", "content": user_input}))
         result = call_llm_message(conversation_history)
+        conversation_history.append({"role": "assistant", "content": result})
         print(result)
 
 
