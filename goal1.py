@@ -1,9 +1,5 @@
-# --- Configuration ---
-import json
-
 import requests
 
-# OLLAMA_API_BASE_URL = "http://localhost:11434/api/chat"
 OLLAMA_API_BASE_URL = "http://localhost:11434/api"
 OLLAMA_MODEL = "qwen2.5:7b" # Ensure you have 'qwen' model pulled in Ollama
 
@@ -12,13 +8,11 @@ def call_llm(prompt):
     payload = {
         "model": OLLAMA_MODEL,
         "prompt": prompt,
-        "format": "json",
         "stream": False
     }
     response = requests.post(url, json=payload)
     response_json = response.json()
-    print(response_json)
-    # print(json.dumps(response_json, indent=2))
+    print(response_json["response"])
 
 call_llm("Who are you ?")
 

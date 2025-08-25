@@ -1,19 +1,21 @@
 import requests
 
-OLLAMA_API_URL = "http://localhost:11434/api/chat"
+OLLAMA_API_BASE_URL = "http://localhost:11434/api"
 OLLAMA_MODEL = "qwen2.5:7b"
 
 conversation_history = []
 
 
-def call_llm_message(prompt_messages):
-    response = requests.post(OLLAMA_API_URL,
-                             json={"model": OLLAMA_MODEL, "messages": prompt_messages, "stream": False,
-                                   "format": "json"},
-                             timeout=120)  # Increased timeout for local LLM
-    response.raise_for_status()  # Raise an exception for HTTP errors
-    llm_output = response.json()['message']['content']
-    return llm_output
+def call_llm(prompt):
+    url = OLLAMA_API_BASE_URL + "/generate"
+    payload = {
+        "model": OLLAMA_MODEL,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(url, json=payload)
+    response_json = response.json()
+    return response_json["response"]
 
 
 def run_agent_loop():
@@ -23,9 +25,7 @@ def run_agent_loop():
             break
         elif not user_input:
             continue
-        conversation_history.append(({"role": "user", "content": user_input}))
-        result = call_llm_message(conversation_history)
-        conversation_history.append({"role": "assistant", "content": result})
+        result = call_llm(user_input)
         print(result)
 
 

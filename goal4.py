@@ -9,18 +9,18 @@ from tasks import create_task, completed_task, list_tasks
 OLLAMA_API_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = "qwen2.5:7b"  # Ensure you have 'qwen' model pulled in Ollama
 
-
-def call_llm(prompt):
-    url = "http://localhost:11434/api/generate"
-    payload = {
-        "model": "qwen2.5:7b",  # Or whatever model you chose
-        "messages": prompt,
-        # "prompt": "who are you ?",
-        "stream": True,
-        "format": "json"
-    }
-    response = requests.post(url, json=payload)
-    print(response.json())
+#
+# def call_llm(prompt):
+#     url = "http://localhost:11434/api/generate"
+#     payload = {
+#         "model": "qwen2.5:7b",  # Or whatever model you chose
+#         "messages": prompt,
+#         # "prompt": "who are you ?",
+#         "stream": True,
+#         "format": "json"
+#     }
+#     response = requests.post(url, json=payload)
+#     print(response.json())
 
 
 def llm_response(llm_response):

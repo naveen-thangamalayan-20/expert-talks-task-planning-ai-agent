@@ -59,26 +59,6 @@ tools = [
 ]
 
 
-# --- LLM API Call Function ---
-def call_llm_message(prompt_messages):
-    """
-    Calls the Ollama API with tool definitions.
-    """
-    response = requests.post(
-        OLLAMA_API_URL,
-        json={
-            "model": OLLAMA_MODEL,
-            "messages": prompt_messages,
-            "stream": False,
-            "tools": tools,  # Pass the tools to the LLM
-            "tool_choice": "auto"  # Let the LLM decide which tool to call
-        },
-        timeout=120
-    )
-    response.raise_for_status()
-    # The response will now contain a tool_calls array if a tool was invoked
-    return response.json()['message']
-
 
 # --- Action and Agent Loop ---
 def perform_action(llm_response_message):
@@ -110,6 +90,28 @@ def perform_action(llm_response_message):
             return result
         else:
             return f"Error: Unknown tool '{function_name}'"
+
+
+
+# --- LLM API Call Function ---
+def call_llm_message(prompt_messages):
+    """
+    Calls the Ollama API with tool definitions.
+    """
+    response = requests.post(
+        OLLAMA_API_URL,
+        json={
+            "model": OLLAMA_MODEL,
+            "messages": prompt_messages,
+            "stream": False,
+            "tools": tools,  # Pass the tools to the LLM
+            "tool_choice": "auto"  # Let the LLM decide which tool to call
+        },
+        timeout=120
+    )
+    response.raise_for_status()
+    # The response will now contain a tool_calls array if a tool was invoked
+    return response.json()['message']
 
 
 def run_agent_loop():
