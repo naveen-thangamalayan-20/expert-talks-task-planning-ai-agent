@@ -14,7 +14,7 @@ def call_llm(prompt):
     response_json = response.json()
     print(response_json["response"])
 
-call_llm("Who are you ?")
+call_llm("Explain the about india ?")
 
 
 

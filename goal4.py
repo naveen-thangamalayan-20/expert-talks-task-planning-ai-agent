@@ -42,12 +42,11 @@ def call_llm_message(prompt_messages):
     response.raise_for_status()  # Raise an exception for HTTP errors
     llm_output = response.json()['message']['content']
     return llm_response(llm_output)
-    # print(response.json())
 
 
 context = {
     "role": "system",
-    "content": """You are a conversational task manager API. Your primary goal is to help the user manager their task.
+    "content": """You are a conversational task manager Agent. Your primary goal is to help the user manager their task.
                   You understand commands to add tasks, list tasks, mark tasks as complete, query specific task or clear the task.
                   You must always respond in structure json format
 
@@ -68,14 +67,17 @@ conversation_history = []
 
 
 def perform_action(llm_message):
+    print(llm_message)
     if llm_message["intent"] == "add_task":
-        create_task(llm_message["task_description"])
-        return llm_message["response_message"]
+        return create_task(llm_message["task_description"])
+        # return llm_message["response_message"]
     elif llm_message["intent"] == "complete_task":
-        completed_task(llm_message["task_description"])
-        return llm_message["task_description"] + "is completed"
+        return completed_task(llm_message["task_description"])
+        # return llm_message["task_description"] + " is completed"
     elif llm_message["intent"] == "list_tasks":
-        list_tasks()
+        result =  list_tasks()
+        # print(result)
+        return result
 
 
 def run_agent_loop():
@@ -86,12 +88,12 @@ def run_agent_loop():
             break
         elif not user_input:
             continue
-        print(user_input)
         conversation_history.append(({"role": "user", "content": user_input}))
         result = call_llm_message(conversation_history)
         action_result = perform_action(result)
         conversation_history.append({"role": "assistant", "content": action_result})
-        print(result["response_message"])
+        print(f"Agent: {action_result}")
+        # print(result["response_message"])
 
 
 run_agent_loop()

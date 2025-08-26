@@ -3,8 +3,6 @@ import requests
 OLLAMA_API_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = "qwen2.5:7b"
 
-conversation_history = []
-
 
 def call_llm_message(prompt_messages):
     response = requests.post(OLLAMA_API_URL,
@@ -15,6 +13,7 @@ def call_llm_message(prompt_messages):
     llm_output = response.json()['message']['content']
     return llm_output
 
+conversation_history = []
 
 def run_agent_loop():
     while True:
