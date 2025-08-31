@@ -1,4 +1,3 @@
-# Conceptual code - don't dwell on details, just show structure
 import json
 
 import requests
@@ -9,26 +8,11 @@ from tasks import create_task, completed_task, list_tasks
 OLLAMA_API_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = "qwen2.5:7b"  # Ensure you have 'qwen' model pulled in Ollama
 
-#
-# def call_llm(prompt):
-#     url = "http://localhost:11434/api/generate"
-#     payload = {
-#         "model": "qwen2.5:7b",  # Or whatever model you chose
-#         "messages": prompt,
-#         # "prompt": "who are you ?",
-#         "stream": True,
-#         "format": "json"
-#     }
-#     response = requests.post(url, json=payload)
-#     print(response.json())
-
-
-def llm_response(llm_response):
+def parse_json_string(llm_response):
     json_start = llm_response.find("{")
     json_end = llm_response.rfind("}")
     if json_start != -1 and json_end != -1 and json_start < json_end:
         json_string = llm_response[json_start: json_end + 1]
-        print(json_string)
         return json.loads(json_string)
     else:
         raise Exception("Response not valid json")
@@ -41,8 +25,19 @@ def call_llm_message(prompt_messages):
                              timeout=120)  # Increased timeout for local LLM
     response.raise_for_status()  # Raise an exception for HTTP errors
     llm_output = response.json()['message']['content']
-    return llm_response(llm_output)
+    return parse_json_string(llm_output)
 
+
+def perform_action(llm_message):
+    if llm_message["intent"] == "add_task":
+        return create_task(llm_message["task_description"])
+    elif llm_message["intent"] == "complete_task":
+        return completed_task(llm_message["task_description"])
+    elif llm_message["intent"] == "list_tasks":
+        result =  list_tasks()
+        return result
+
+conversation_history = []
 
 context = {
     "role": "system",
@@ -63,23 +58,6 @@ context = {
                """
 }
 
-conversation_history = []
-
-
-def perform_action(llm_message):
-    print(llm_message)
-    if llm_message["intent"] == "add_task":
-        return create_task(llm_message["task_description"])
-        # return llm_message["response_message"]
-    elif llm_message["intent"] == "complete_task":
-        return completed_task(llm_message["task_description"])
-        # return llm_message["task_description"] + " is completed"
-    elif llm_message["intent"] == "list_tasks":
-        result =  list_tasks()
-        # print(result)
-        return result
-
-
 def run_agent_loop():
     conversation_history.append(context)
     while True:
@@ -88,12 +66,17 @@ def run_agent_loop():
             break
         elif not user_input:
             continue
+
+        # Add user's message to the conversation history
         conversation_history.append(({"role": "user", "content": user_input}))
+        # Call the LLM with the updated history
         result = call_llm_message(conversation_history)
+        # Perform the action based on the parsed LLM's response
         action_result = perform_action(result)
+        # Add the agent's response to the conversation history for contextZ
         conversation_history.append({"role": "assistant", "content": action_result})
+        # Display the result to the user
         print(f"Agent: {action_result}")
-        # print(result["response_message"])
 
 
 run_agent_loop()

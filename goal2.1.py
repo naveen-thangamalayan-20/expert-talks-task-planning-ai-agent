@@ -4,7 +4,7 @@ OLLAMA_API_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = "qwen2.5:7b"
 
 
-def call_llm_message(prompt_messages):
+def call_llm(prompt_messages):
     response = requests.post(OLLAMA_API_URL,
                              json={"model": OLLAMA_MODEL, "messages": prompt_messages, "stream": False,
                                    },
@@ -15,17 +15,9 @@ def call_llm_message(prompt_messages):
 
 conversation_history = []
 
-def run_agent_loop():
-    while True:
-        user_input = input("You:").strip()
-        if user_input == "quit":
-            break
-        elif not user_input:
-            continue
-        conversation_history.append(({"role": "user", "content": user_input}))
-        result = call_llm_message(conversation_history)
-        conversation_history.append({"role": "assistant", "content": result})
-        print(result)
+def run():
+    conversation_history.append(({"role": "system", "content": "Assume you are a poet and provide answer to user as haiku"}))
+    conversation_history.append(({"role": "user", "content": "Explain the about india ?"}))
+    print(call_llm(conversation_history))
 
-
-run_agent_loop()
+run()

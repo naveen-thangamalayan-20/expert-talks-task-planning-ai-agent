@@ -1,14 +1,14 @@
 [
     {
         "task_description": "goto gym",
-        "status": "Completed"
+        "status": "New"
     },
     {
-        "task_description": "Do haircut",
-        "status": "Completed"
+        "task_description": "goto shopping",
+        "status": "New"
     },
     {
-        "task_description": "goto pet store",
+        "task_description": "goto hair salon",
         "status": "Completed"
     }
 ]

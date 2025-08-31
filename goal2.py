@@ -26,7 +26,7 @@ def run_agent_loop():
         elif not user_input:
             continue
         result = call_llm(user_input)
-        print(result)
-
+        print(f"Agent: {result}")
+        print("-------------------------")
 
 run_agent_loop()

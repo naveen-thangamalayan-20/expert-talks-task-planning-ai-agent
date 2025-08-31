@@ -145,9 +145,8 @@ def run_agent_loop():
         print(f"Agent: {action_result}")
 
         # Add the agent's response to the conversation history for context
-        # Note: In a full implementation, you'd add both the tool call and the tool output
-        # to the history for a complete context chain.
         conversation_history.append({"role": "assistant", "content": action_result})
+        print("---------")
 
 
 # Start the agent
